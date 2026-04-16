@@ -1,58 +1,56 @@
 <?php
-require_once '../config.php';
-require_once '../models/UserModel.php';
+require_once __DIR__ . '/../models/UserModel.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 class AuthController {
-    private $userModel;
-
-    public function __construct() {
-        $this->userModel = new UserModel();
-    }
-
     public function login() {
-        session_start();
-        $email = $_POST['username'] ?? '';
-        $password = $_POST['password'] ?? '';
-        $user = $this->userModel->getUserByEmail($email);
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user'] = [
-                'id' => (string)$user['_id'],
-                'email' => $user['email'],
-                'username' => $user['username'] ?? ''
-            ];
-            header('Location: ../index.php');
-            exit;
-        } else {
-            $error = 'Sai thông tin đăng nhập!';
-            include '../views/login.php';
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            $userModel = new UserModel();
+            $user = $userModel->getUserByEmail($email);
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user'] = [
+                    'email' => $user['email'],
+                    '_id' => (string)($user['_id'] ?? '')
+                ];
+                header('Location: index.php');
+                exit;
+            } else {
+                $error = 'Email hoặc mật khẩu không đúng.';
+            }
         }
+        include __DIR__ . '/../views/login.php';
     }
 
     public function register() {
-        $username = $_POST['username'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-        if ($this->userModel->getUserByEmail($email)) {
-            $error = 'Email đã tồn tại!';
-            include '../views/register.php';
-            return;
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            $confirm = $_POST['confirm_password'] ?? '';
+            if ($password !== $confirm) {
+                $error = 'Mật khẩu không khớp.';
+            } else {
+                $userModel = new UserModel();
+                if ($userModel->getUserByEmail($email)) {
+                    $error = 'Email đã tồn tại.';
+                } else {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    $userModel->createUser([
+                        'email' => $email,
+                        'password' => $hash
+                    ]);
+                    header('Location: index.php?page=login');
+                    exit;
+                }
+            }
         }
-        $hash = password_hash($password, PASSWORD_DEFAULT);
-        $this->userModel->createUser([
-            'username' => $username,
-            'email' => $email,
-            'password' => $hash
-        ]);
-        header('Location: ../views/login.php');
-        exit;
+        include __DIR__ . '/../views/register.php';
     }
 }
 
-// Router
-$action = $_GET['action'] ?? '';
-$auth = new AuthController();
-if ($action === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $auth->login();
-} elseif ($action === 'register' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $auth->register();
-}

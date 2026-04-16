@@ -1,15 +1,17 @@
 <?php
-require_once 'BaseModel.php';
+require_once __DIR__ . '/BaseModel.php';
 
 class UserModel extends BaseModel {
     protected $collection;
 
     public function __construct() {
-        parent::__construct();
-        $this->collection = $this->db->users;
+        require_once __DIR__ . '/../config.php';
+        $db = getMongoDBConnection();
+        $this->collection = $db->users;
     }
 
     public function createUser($data) {
+        // $data gồm: email, password
         return $this->collection->insertOne($data);
     }
 

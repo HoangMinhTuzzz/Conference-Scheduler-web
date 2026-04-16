@@ -4,7 +4,7 @@ require_once "models/ConferenceModel.php";
 class ConferenceController {
 
     public function index() {
-        $conferences = ConferenceModel::getAll();
+        $conferences = (new ConferenceModel())->getAllConferences();
         include "views/conference_list.php";
     }
 

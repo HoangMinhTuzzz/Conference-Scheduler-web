@@ -5,8 +5,9 @@ class ScheduleModel extends BaseModel {
     protected $collection;
 
     public function __construct() {
-        parent::__construct();
-        $this->collection = $this->db->schedules;
+        require_once __DIR__ . '/../config.php';
+        $db = getMongoDBConnection();
+        $this->collection = $db->schedules;
     }
 
     public function addSchedule($data) {

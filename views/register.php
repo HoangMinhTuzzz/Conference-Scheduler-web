@@ -1,28 +1,24 @@
-<?php
-// views/register.php
-// Form đăng ký
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng ký - MYPROJECT</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" href="views/styles.css">
 </head>
 <body>
-    <div class="project-title">REGISTER FOR AN ACCOUNT</div>
-    <div class="form-container">
-        <h2>Đăng ký</h2>
-        <form action="/controllers/AuthController.php?action=register" method="post">
-            <label for="username">Tên đăng nhập:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">Mật khẩu:</label>
-            <input type="password" id="password" name="password" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <button type="submit">Đăng ký</button>
-        </form>
-        <p>Đã có tài khoản? <a href="login.php">Đăng nhập</a></p>
-    </div>
+    <h2>Đăng ký tài khoản</h2>
+    <?php if (!empty($error)): ?>
+        <div class="error"> <?php echo htmlspecialchars($error); ?> </div>
+    <?php endif; ?>
+    <form method="post" action="index.php?page=register">
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br>
+        <label>Mật khẩu:</label><br>
+        <input type="password" name="password" required><br>
+        <label>Nhập lại mật khẩu:</label><br>
+        <input type="password" name="confirm_password" required><br>
+        <button type="submit">Đăng ký</button>
+    </form>
+    <p>Đã có tài khoản? <a href="index.php?page=login">Đăng nhập</a></p>
 </body>
 </html>
