@@ -1,21 +1,21 @@
 <?php
 require_once __DIR__ . '/../models/ScheduleModel.php';
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
 
 class ScheduleController {
-	private $scheduleModel;
-
-	public function __construct() {
-		$this->scheduleModel = new ScheduleModel();
-	}
-
 	public function index() {
-		// Hiển thị danh sách lịch trình (demo)
-		$schedules = $this->scheduleModel->getSchedulesByUser('demo');
-		echo '<h2>Danh sách lịch trình (demo)</h2>';
-		echo '<ul>';
-		foreach ($schedules as $schedule) {
-			echo '<li>' . htmlspecialchars(json_encode($schedule)) . '</li>';
+		$schedules = [];
+		$isLoggedIn = isset($_SESSION['user']);
+		if ($isLoggedIn) {
+			$userId = $_SESSION['user']['_id'];
+			$model = new ScheduleModel();
+			$cursor = $model->getSchedulesByUser($userId);
+			foreach ($cursor as $item) {
+				$schedules[] = $item;
+			}
 		}
-		echo '</ul>';
+		include __DIR__ . '/../views/schedule.php';
 	}
 }
