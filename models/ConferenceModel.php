@@ -15,18 +15,26 @@ class ConferenceModel extends BaseModel {
     }
 
     public function getConferenceById($id) {
-        return $this->collection->findOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
+        return $this->collection->findOne([
+            '_id' => new MongoDB\BSON\ObjectId($id)
+        ]);
     }
 
+    // 🔥 FIX Ở ĐÂY
     public function getAllConferences() {
-        return $this->collection->find();
+        return $this->collection->find()->toArray();
     }
 
     public function updateConference($id, $data) {
-        return $this->collection->updateOne(['_id' => new MongoDB\BSON\ObjectId($id)], ['$set' => $data]);
+        return $this->collection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId($id)],
+            ['$set' => $data]
+        );
     }
 
     public function deleteConference($id) {
-        return $this->collection->deleteOne(['_id' => new MongoDB\BSON\ObjectId($id)]);
+        return $this->collection->deleteOne([
+            '_id' => new MongoDB\BSON\ObjectId($id)
+        ]);
     }
 }
