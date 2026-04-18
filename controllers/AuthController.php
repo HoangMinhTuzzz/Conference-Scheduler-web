@@ -6,6 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 class AuthController {
+    public function logout() {
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: index.php');
+        exit;
+    }
     public function login() {
         $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -16,7 +23,8 @@ class AuthController {
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user'] = [
                     'email' => $user['email'],
-                    '_id' => (string)($user['_id'] ?? '')
+                    '_id' => (string)($user['_id'] ?? ''),
+                    'role' => $user['role'] ?? 'user'
                 ];
                 header('Location: index.php');
                 exit;
@@ -41,9 +49,11 @@ class AuthController {
                     $error = 'Email đã tồn tại.';
                 } else {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
+                    // Mặc định role là user
                     $userModel->createUser([
                         'email' => $email,
-                        'password' => $hash
+                        'password' => $hash,
+                        'role' => 'user'
                     ]);
                     header('Location: index.php?page=login');
                     exit;

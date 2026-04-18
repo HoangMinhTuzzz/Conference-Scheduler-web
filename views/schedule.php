@@ -4,6 +4,20 @@ include __DIR__ . '/Layout/header.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $isLoggedIn = isset($_SESSION['user']);
 
+// Hiển thị các lịch (conference) mà user có thể tham gia
+if ($isLoggedIn && !empty($availableSchedules)) {
+	echo '<div style="background:#f8fafc;border:1px solid #e0e7ef;padding:16px 24px;margin:24px 0;border-radius:8px;max-width:700px">';
+	echo '<h3 style="margin-top:0">Các lịch bạn có thể tham gia:</h3>';
+	echo '<ul style="margin:0 0 0 18px">';
+	foreach ($availableSchedules as $conf) {
+		echo '<li><b>' . htmlspecialchars($conf['title'] ?? 'No title') . '</b> - ';
+		echo htmlspecialchars($conf['description'] ?? '') . ' ';
+		echo '<a href="index.php?page=conference_detail&id=' . $conf['_id'] . '" style="color:#3366cc">Xem chi tiết</a></li>';
+	}
+	echo '</ul>';
+	echo '</div>';
+}
+
 // Xử lý chọn năm, tháng, tuần
 $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 $month = isset($_GET['month']) ? intval($_GET['month']) : date('n');

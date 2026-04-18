@@ -9,12 +9,17 @@ class UserController {
 	}
 
 	public function index() {
+		session_start();
+		if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? 'user') !== 'admin') {
+			header('Location: index.php?page=login');
+			exit;
+		}
 		// Hiển thị danh sách user (demo)
 		$users = $this->userModel->getAllUsers();
 		echo '<h2>Danh sách người dùng</h2>';
 		echo '<ul>';
 		foreach ($users as $user) {
-			echo '<li>' . htmlspecialchars($user['email']) . '</li>';
+			echo '<li>' . htmlspecialchars($user['email']) . ' - ' . htmlspecialchars($user['role'] ?? 'user') . '</li>';
 		}
 		echo '</ul>';
 	}
