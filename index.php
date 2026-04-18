@@ -59,8 +59,13 @@ switch ($page) {
         (new UserController())->profile();
         break;
 
+
     case 'users':
         (new UserController())->index();
+        break;
+
+    case 'logout':
+        (new AuthController())->logout();
         break;
 
     default:
