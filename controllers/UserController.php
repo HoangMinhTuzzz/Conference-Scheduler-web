@@ -9,30 +9,48 @@ class UserController {
 	}
 
 	public function index() {
-		session_start();
+		// Đã có session_start() ở index.php, không cần gọi lại ở đây
 		if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? 'user') !== 'admin') {
 			header('Location: index.php?page=login');
 			exit;
 		}
-		// Hiển thị danh sách user (demo)
-		$users = $this->userModel->getAllUsers();
-		echo '<h2>Danh sách người dùng</h2>';
-		echo '<ul>';
-		foreach ($users as $user) {
-			echo '<li>' . htmlspecialchars($user['email']) . ' - ' . htmlspecialchars($user['role'] ?? 'user') . '</li>';
+		$userModel = $this->userModel;
+		// Duyệt user nếu có approve
+		if (isset($_GET['approve'])) {
+			$id = $_GET['approve'];
+			$userModel->approveUser($id);
+			header('Location: index.php?page=users');
+			exit;
 		}
-		echo '</ul>';
+		// Hiển thị danh sách user
+		$users = $userModel->getAllUsers();
+		include __DIR__ . '/../views/user_list.php';
 	}
 
 	public function profile() {
-		session_start();
 		if (!isset($_SESSION['user'])) {
 			header('Location: index.php?page=login');
 			exit;
 		}
 		$user = $this->userModel->getUserByEmail($_SESSION['user']['email']);
-		echo '<h2>Thông tin cá nhân</h2>';
-		echo '<p>Email: ' . htmlspecialchars($user['email']) . '</p>';
-		echo '<p>Username: ' . htmlspecialchars($user['username'] ?? '') . '</p>';
+		$error = '';
+		$success = '';
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$old = $_POST['old_password'] ?? '';
+			$new = $_POST['new_password'] ?? '';
+			$confirm = $_POST['confirm_password'] ?? '';
+			if (!password_verify($old, $user['password'])) {
+				$error = 'Mật khẩu cũ không đúng.';
+			} elseif (strlen($new) < 6) {
+				$error = 'Mật khẩu mới phải từ 6 ký tự.';
+			} elseif ($new !== $confirm) {
+				$error = 'Mật khẩu nhập lại không khớp.';
+			} else {
+				$hash = password_hash($new, PASSWORD_DEFAULT);
+				$this->userModel->updatePassword($user['_id'], $hash);
+				$success = 'Đã cập nhật mật khẩu thành công!';
+			}
+		}
+		include __DIR__ . '/../views/profile.php';
 	}
 }

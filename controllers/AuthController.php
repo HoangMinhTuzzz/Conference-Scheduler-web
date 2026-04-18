@@ -1,13 +1,8 @@
 <?php
 require_once __DIR__ . '/../models/UserModel.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 class AuthController {
     public function logout() {
-        session_start();
         session_unset();
         session_destroy();
         header('Location: index.php');
@@ -21,13 +16,17 @@ class AuthController {
             $userModel = new UserModel();
             $user = $userModel->getUserByEmail($email);
             if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user'] = [
-                    'email' => $user['email'],
-                    '_id' => (string)($user['_id'] ?? ''),
-                    'role' => $user['role'] ?? 'user'
-                ];
-                header('Location: index.php');
-                exit;
+                if (($user['status'] ?? 'pending') !== 'active') {
+                    $error = 'Tài khoản của bạn đang chờ duyệt.';
+                } else {
+                    $_SESSION['user'] = [
+                        'email' => $user['email'],
+                        '_id' => (string)($user['_id'] ?? ''),
+                        'role' => $user['role'] ?? 'user'
+                    ];
+                    header('Location: index.php');
+                    exit;
+                }
             } else {
                 $error = 'Email hoặc mật khẩu không đúng.';
             }
@@ -49,13 +48,13 @@ class AuthController {
                     $error = 'Email đã tồn tại.';
                 } else {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
-                    // Mặc định role là user
                     $userModel->createUser([
                         'email' => $email,
                         'password' => $hash,
-                        'role' => 'user'
+                        'role' => 'user',
+                        'status' => 'pending'
                     ]);
-                    header('Location: index.php?page=login');
+                    header('Location: index.php?page=login&pending=1');
                     exit;
                 }
             }

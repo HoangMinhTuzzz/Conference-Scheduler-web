@@ -1,8 +1,5 @@
 <?php
 require_once __DIR__ . '/../models/ScheduleModel.php';
-if (session_status() === PHP_SESSION_NONE) {
-	session_start();
-}
 
 class ScheduleController {
 	public function index() {

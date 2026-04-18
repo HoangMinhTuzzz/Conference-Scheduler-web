@@ -1,6 +1,5 @@
-
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
+// Đã có session_start() ở index.php, không cần gọi lại ở đây
 $isLoggedIn = isset($_SESSION['user']);
 $role = $isLoggedIn ? ($_SESSION['user']['role'] ?? 'user') : null;
 ?>

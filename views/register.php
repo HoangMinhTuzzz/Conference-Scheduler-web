@@ -10,6 +10,9 @@
     <?php if (!empty($error)): ?>
         <div class="error"> <?php echo htmlspecialchars($error); ?> </div>
     <?php endif; ?>
+    <?php if (isset($_GET['pending'])): ?>
+        <div style="color:green;margin-bottom:16px">Đăng ký thành công! Vui lòng chờ admin duyệt tài khoản.</div>
+    <?php endif; ?>
     <form method="post" action="index.php?page=register">
         <label>Email:</label><br>
         <input type="email" name="email" required><br>

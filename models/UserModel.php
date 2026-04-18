@@ -22,4 +22,18 @@ class UserModel extends BaseModel {
     public function getAllUsers() {
         return $this->collection->find();
     }
+
+    public function approveUser($id) {
+        return $this->collection->updateOne(
+            ['_id' => new MongoDB\BSON\ObjectId($id)],
+            ['$set' => ['status' => 'active']]
+        );
+    }
+
+    public function updatePassword($id, $hash) {
+        return $this->collection->updateOne(
+            ['_id' => $id instanceof \MongoDB\BSON\ObjectId ? $id : new \MongoDB\BSON\ObjectId($id)],
+            ['$set' => ['password' => $hash]]
+        );
+    }
 }
