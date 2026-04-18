@@ -1,4 +1,6 @@
+
 <?php
+include __DIR__ . '/Layout/header.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 $isLoggedIn = isset($_SESSION['user']);
 
@@ -59,29 +61,35 @@ function renderScheduleCell($schedules, $day, $slot, $dateStr) {
 	}
 }
 ?>
+
 <div style="margin:20px">
-	<form method="get" style="margin-bottom:10px;display:flex;gap:20px;align-items:center">
-		<label>Year
-			<select name="year" onchange="this.form.submit()">
+	<form method="get" style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:flex-start">
+		<input type="hidden" name="page" value="schedule">
+		<div>
+			<label for="year">Năm</label><br>
+			<select id="year" name="year" onchange="this.form.submit()" style="padding:4px 8px">
 				<?php for($y = $year-2; $y <= $year+2; $y++) { ?>
 					<option value="<?= $y ?>" <?= $y==$year?'selected':'' ?>><?= $y ?></option>
 				<?php } ?>
 			</select>
-		</label>
-		<label>Month
-			<select name="month" onchange="this.form.submit()">
+		</div>
+		<div>
+			<label for="month">Tháng</label><br>
+			<select id="month" name="month" onchange="this.form.submit()" style="padding:4px 8px">
 				<?php for($m=1;$m<=12;$m++) { ?>
 					<option value="<?= $m ?>" <?= $m==$month?'selected':'' ?>><?= DateTime::createFromFormat('!m', $m)->format('M') ?></option>
 				<?php } ?>
 			</select>
-		</label>
-		<label>Week
-			<select name="week" onchange="this.form.submit()">
+		</div>
+		<div>
+			<label for="week">Tuần</label><br>
+			<select id="week" name="week" onchange="this.form.submit()" style="padding:4px 8px">
 				<?php for($w=1;$w<=$weeksInMonth;$w++) { ?>
 					<option value="<?= $w ?>" <?= $w==$week?'selected':'' ?>><?= $w ?></option>
 				<?php } ?>
 			</select>
-		</label>
+		</div>
+		<noscript><button type="submit">Xem lịch</button></noscript>
 	</form>
 	<table border="1" cellpadding="8" cellspacing="0" style="width:100%;text-align:center;border-collapse:collapse">
 		<tr style="background:#232e7a;color:#fff">
@@ -101,5 +109,8 @@ function renderScheduleCell($schedules, $day, $slot, $dateStr) {
 	</table>
 	<?php if (!$isLoggedIn) { ?>
 		<div style="margin-top:20px;color:#888">Vui lòng đăng nhập để xem lịch cá nhân.</div>
+		<div style="margin-top:10px">
+			<a href="index.php?page=login" style="display:inline-block;padding:8px 20px;background:#232e7a;color:#fff;text-decoration:none;border-radius:4px;font-weight:bold">Đăng nhập</a>
+		</div>
 	<?php } ?>
 </div>
