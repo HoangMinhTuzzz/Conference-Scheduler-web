@@ -47,6 +47,10 @@ switch ($page) {
         (new ConferenceController())->edit();
         break;
 
+    case 'conference_delete':
+        (new ConferenceController())->delete();
+        break;
+
     case 'schedule':
         (new ScheduleController())->index();
         break;
