@@ -112,8 +112,18 @@
 
 <?php include __DIR__ . "/layout/header.php"; ?>
 
+<?php 
+$isLoggedIn = isset($_SESSION['user']);
+?>
+
 <div class="container">
-    <?php if ($conference): ?>
+    <?php if (!$isLoggedIn): ?>
+        <div style="background: white; padding: 40px; border-radius: 12px; text-align: center;">
+            <h2 style="color: #333; margin-top: 0;">Please Log In</h2>
+            <p style="color: #888; font-size: 16px; margin-bottom: 20px;">You need to be logged in to view conference details.</p>
+            <a href="index.php?page=login" style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s;">Login</a>
+        </div>
+    <?php elseif ($conference): ?>
         <div class="header">
             <h1><?php echo htmlspecialchars($conference['title'] ?? 'Conference'); ?></h1>
         </div>
