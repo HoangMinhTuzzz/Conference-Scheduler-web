@@ -126,6 +126,20 @@
         </div>
 
         <div class="form-group">
+            <label>Time Slot</label>
+            <select name="slot" required style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                <option value="">-- Select Time Slot --</option>
+                <option value="1" <?php echo (($conference['slot'] ?? null) == 1) ? 'selected' : ''; ?>>Slot 1: 9:00 AM - 10:00 AM</option>
+                <option value="2" <?php echo (($conference['slot'] ?? null) == 2) ? 'selected' : ''; ?>>Slot 2: 10:00 AM - 11:00 AM</option>
+                <option value="3" <?php echo (($conference['slot'] ?? null) == 3) ? 'selected' : ''; ?>>Slot 3: 11:00 AM - 12:00 PM</option>
+                <option value="4" <?php echo (($conference['slot'] ?? null) == 4) ? 'selected' : ''; ?>>Slot 4: 12:00 PM - 1:00 PM</option>
+                <option value="5" <?php echo (($conference['slot'] ?? null) == 5) ? 'selected' : ''; ?>>Slot 5: 1:00 PM - 2:00 PM</option>
+                <option value="6" <?php echo (($conference['slot'] ?? null) == 6) ? 'selected' : ''; ?>>Slot 6: 2:00 PM - 3:00 PM</option>
+                <option value="7" <?php echo (($conference['slot'] ?? null) == 7) ? 'selected' : ''; ?>>Slot 7: 3:00 PM - 9:00 PM</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>Description</label>
             <textarea name="description"><?php echo htmlspecialchars($conference['description'] ?? ''); ?></textarea>
         </div>

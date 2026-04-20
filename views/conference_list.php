@@ -149,7 +149,12 @@ body {
 
     <div class="page-header">
         <h1>📅 Conferences</h1>
-        <a href="index.php?page=conference_create" class="btn-create">+ Create</a>
+        <?php 
+            $userRole = $_SESSION['user']['role'] ?? 'user';
+            if ($userRole === 'admin'):
+        ?>
+            <a href="index.php?page=conference_create" class="btn-create">+ Create</a>
+        <?php endif; ?>
     </div>
 
     <div class="search-box">
@@ -173,11 +178,31 @@ body {
                     <div class="card-body">
                         <div class="info">📅 <?php echo $date; ?></div>
                         <div class="info">📍 <?php echo $location; ?></div>
+                        <div class="info">⏰ 
+                            <?php 
+                            $slotMap = [
+                                1 => 'Slot 1: 9:00-10:00',
+                                2 => 'Slot 2: 10:00-11:00',
+                                3 => 'Slot 3: 11:00-12:00',
+                                4 => 'Slot 4: 12:00-13:00',
+                                5 => 'Slot 5: 13:00-14:00',
+                                6 => 'Slot 6: 14:00-15:00',
+                                7 => 'Slot 7: 15:00-21:00',
+                            ];
+                            $slot = $conf['slot'] ?? null;
+                            echo $slot && isset($slotMap[$slot]) ? htmlspecialchars($slotMap[$slot]) : 'Not assigned';
+                            ?>
+                        </div>
 
                         <div class="actions">
                             <a href="index.php?page=conference_detail&id=<?php echo $id; ?>" class="btn view">View</a>
-                            <a href="index.php?page=conference_edit&id=<?php echo $id; ?>" class="btn edit">Edit</a>
-                            <a href="#" onclick="deleteConf('<?php echo $id; ?>')" class="btn delete">Delete</a>
+                            <?php 
+                                $userRole = $_SESSION['user']['role'] ?? 'user';
+                                if ($userRole === 'admin'):
+                            ?>
+                                <a href="index.php?page=conference_edit&id=<?php echo $id; ?>" class="btn edit">Edit</a>
+                                <a href="#" onclick="deleteConf('<?php echo $id; ?>')" class="btn delete">Delete</a>
+                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -188,8 +213,15 @@ body {
 
         <div class="empty">
             <h2>No conferences yet</h2>
-            <p>Create your first one 🚀</p>
-            <a href="index.php?page=conference_create" class="btn-create">Create now</a>
+            <?php 
+                $userRole = $_SESSION['user']['role'] ?? 'user';
+                if ($userRole === 'admin'):
+            ?>
+                <p>Create your first one 🚀</p>
+                <a href="index.php?page=conference_create" class="btn-create">Create now</a>
+            <?php else: ?>
+                <p>No conferences available to view.</p>
+            <?php endif; ?>
         </div>
 
     <?php endif; ?>

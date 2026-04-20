@@ -130,6 +130,25 @@
             </div>
 
             <div class="detail-item">
+                <div class="detail-label">⏰ Time Slot</div>
+                <div class="detail-value">
+                    <?php 
+                    $slotMap = [
+                        1 => 'Slot 1: 9:00 AM - 10:00 AM',
+                        2 => 'Slot 2: 10:00 AM - 11:00 AM',
+                        3 => 'Slot 3: 11:00 AM - 12:00 PM',
+                        4 => 'Slot 4: 12:00 PM - 1:00 PM',
+                        5 => 'Slot 5: 1:00 PM - 2:00 PM',
+                        6 => 'Slot 6: 2:00 PM - 3:00 PM',
+                        7 => 'Slot 7: 3:00 PM - 9:00 PM',
+                    ];
+                    $slot = $conference['slot'] ?? null;
+                    echo $slot && isset($slotMap[$slot]) ? htmlspecialchars($slotMap[$slot]) : 'Not assigned';
+                    ?>
+                </div>
+            </div>
+
+            <div class="detail-item">
                 <div class="detail-label">📝 Description</div>
                 <div class="detail-value">
                     <?php 

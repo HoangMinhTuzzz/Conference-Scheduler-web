@@ -108,6 +108,20 @@
         </div>
 
         <div class="form-group">
+            <label>Time Slot</label>
+            <select name="slot" required style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+                <option value="">-- Select Time Slot --</option>
+                <option value="1">Slot 1: 9:00 AM - 10:00 AM</option>
+                <option value="2">Slot 2: 10:00 AM - 11:00 AM</option>
+                <option value="3">Slot 3: 11:00 AM - 12:00 PM</option>
+                <option value="4">Slot 4: 12:00 PM - 1:00 PM</option>
+                <option value="5">Slot 5: 1:00 PM - 2:00 PM</option>
+                <option value="6">Slot 6: 2:00 PM - 3:00 PM</option>
+                <option value="7">Slot 7: 3:00 PM - 9:00 PM</option>
+            </select>
+        </div>
+
+        <div class="form-group">
             <label>Description</label>
             <textarea name="description"></textarea>
         </div>

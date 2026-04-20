@@ -214,12 +214,112 @@ function renderScheduleCell($schedules, $day, $slot, $dateStr) {
 		}
 	}
 }
+
+function renderConferenceCell($conferences, $day, $dateStr) {
+	if (!$conferences) return '';
+	$output = '';
+	foreach ($conferences as $conf) {
+		// So sánh ngày (d/m)
+		if (isset($conf['date']) && date('d/m', strtotime($conf['date'])) == $dateStr) {
+			$output .= '<div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #fff; cursor: pointer;" title="' . htmlspecialchars($conf['location'] ?? '') . '">';
+			$output .= '<div style="font-weight: bold; font-size: 13px;">' . htmlspecialchars($conf['title']) . '</div>';
+			$output .= '<div style="font-size: 12px; opacity: 0.9;">📍 ' . htmlspecialchars($conf['location'] ?? 'N/A') . '</div>';
+			$output .= '</div>';
+		}
+	}
+	return $output;
+}
+
+function renderConferenceCellBySlot($conferences, $slot, $dateStr) {
+	if (!$conferences) return '';
+	foreach ($conferences as $conf) {
+		// So sánh ngày (d/m) và slot
+		if (isset($conf['date']) && date('d/m', strtotime($conf['date'])) == $dateStr && ($conf['slot'] ?? 0) == $slot) {
+			echo '<div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 10px; border-radius: 6px; border-left: 4px solid #fff;">';
+			echo '<div style="font-weight: bold; font-size: 13px;">' . htmlspecialchars($conf['title']) . '</div>';
+			echo '<div style="font-size: 12px; opacity: 0.9;">📍 ' . htmlspecialchars($conf['location'] ?? 'N/A') . '</div>';
+			echo '</div>';
+		}
+	}
+}
 ?>
 
 <div class="container">
 	<div class="page-header">
 		<h1>📅 Schedule</h1>
 	</div>
+
+	<?php if ($isLoggedIn) { ?>
+		<!-- Today's Conferences Section -->
+		<?php if (!empty($todayConferences)) { ?>
+			<div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 24px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+				<h2 style="margin-top: 0; display: flex; align-items: center; gap: 10px;">
+					<span style="font-size: 24px;">⏰</span> Today's Conferences
+				</h2>
+				<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+					<?php foreach ($todayConferences as $conf) { ?>
+						<div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+							<h3 style="margin: 0 0 10px 0; font-size: 18px;">
+								<?php echo htmlspecialchars($conf['title'] ?? 'Untitled Conference'); ?>
+							</h3>
+							<p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
+								📍 <strong><?php echo htmlspecialchars($conf['location'] ?? 'N/A'); ?></strong>
+							</p>
+							<p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
+								📅 <strong><?php echo htmlspecialchars($conf['date'] ?? 'N/A'); ?></strong>
+							</p>
+							<?php if (!empty($conf['description'])) { ?>
+								<p style="margin: 8px 0; font-size: 13px; opacity: 0.9;">
+									<?php echo htmlspecialchars(substr($conf['description'], 0, 100)); ?>
+									<?php echo strlen($conf['description']) > 100 ? '...' : ''; ?>
+								</p>
+							<?php } ?>
+							<a href="index.php?page=conference_detail&id=<?php echo (string)($conf['_id'] ?? ''); ?>" style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: rgba(255,255,255,0.25); color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 600; transition: 0.2s; border: 1px solid rgba(255,255,255,0.3);">
+								View Details →
+							</a>
+						</div>
+					<?php } ?>
+				</div>
+			</div>
+		<?php } ?>
+
+		<!-- This Week's Conferences Section -->
+		<?php if (!empty($weekConferences)) { ?>
+			<div style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white; padding: 24px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);">
+				<h2 style="margin-top: 0; display: flex; align-items: center; gap: 10px;">
+					<span style="font-size: 24px;">📆</span> This Week's Conferences
+				</h2>
+				<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+					<?php foreach ($weekConferences as $conf) { ?>
+						<div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
+							<h3 style="margin: 0 0 10px 0; font-size: 18px;">
+								<?php echo htmlspecialchars($conf['title'] ?? 'Untitled Conference'); ?>
+							</h3>
+							<p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
+								📍 <span style="display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; font-weight: 600;">
+									<?php echo htmlspecialchars($conf['location'] ?? 'N/A'); ?>
+								</span>
+							</p>
+							<p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
+								📅 <span style="display: inline-block; background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 4px; font-weight: 600;">
+									<?php echo htmlspecialchars($conf['date'] ?? 'N/A'); ?>
+								</span>
+							</p>
+							<?php if (!empty($conf['description'])) { ?>
+								<p style="margin: 8px 0; font-size: 13px; opacity: 0.9;">
+									<?php echo htmlspecialchars(substr($conf['description'], 0, 100)); ?>
+									<?php echo strlen($conf['description']) > 100 ? '...' : ''; ?>
+								</p>
+							<?php } ?>
+							<a href="index.php?page=conference_detail&id=<?php echo (string)($conf['_id'] ?? ''); ?>" style="display: inline-block; margin-top: 10px; padding: 8px 16px; background: rgba(255,255,255,0.25); color: white; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: 600; transition: 0.2s; border: 1px solid rgba(255,255,255,0.3);">
+								View Details →
+							</a>
+						</div>
+					<?php } ?>
+				</div>
+			</div>
+		<?php } ?>
+	<?php } ?>
 
 	<div class="filter-section">
 		<form method="get" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; width: 100%;">
@@ -261,12 +361,27 @@ function renderScheduleCell($schedules, $day, $slot, $dateStr) {
 					<th>Date Slot</th>
 					<?php foreach ($weekDays as $d) { echo '<th>' . $d[0] . '<br>' . $d[1] . '</th>'; } ?>
 				</tr>
+				<?php 
+				// Check if there are any conferences with slot 0 (no slot assigned)
+				$allDayConfs = array_filter($allDayConferences, function($conf) { return ($conf['slot'] ?? 0) == 0; });
+				if (!empty($allDayConfs)) { 
+				?>
+					<tr style="background-color: #f0f4ff;">
+						<td style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-weight: bold; text-align: center;">📆 All Day</td>
+						<?php for ($i=0; $i<7; $i++) { ?>
+							<td>
+								<?php echo renderConferenceCell($allDayConfs, $i+1, $weekDays[$i][1]); ?>
+							</td>
+						<?php } ?>
+					</tr>
+				<?php } ?>
 				<?php foreach ($slots as $slot) { ?>
 					<tr>
 						<td><?php echo $slot; ?></td>
 						<?php for ($i=0; $i<7; $i++) { ?>
 							<td>
 								<?php renderScheduleCell($schedules, $i+1, $slot, $weekDays[$i][1]); ?>
+								<?php renderConferenceCellBySlot($allDayConferences, $slot, $weekDays[$i][1]); ?>
 							</td>
 						<?php } ?>
 					</tr>

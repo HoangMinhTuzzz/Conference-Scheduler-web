@@ -10,8 +10,12 @@ class ConferenceController {
     }
 
     public function index() {
-        // Model đã trả về array rồi
-        $conferences = $this->model->getAllConferences();
+        // Get user role from session
+        $userRole = $_SESSION['user']['role'] ?? 'user';
+        $userEmail = $_SESSION['user']['email'] ?? null;
+        
+        // Get conferences based on user role
+        $conferences = $this->model->getAllConferences($userRole, $userEmail);
 
         include "views/conference_list.php";
     }
@@ -30,8 +34,21 @@ class ConferenceController {
     }
 
     public function create() {
+        // Only admin can create conferences
+        $userRole = $_SESSION['user']['role'] ?? 'user';
+        
+        if ($userRole !== 'admin') {
+            echo "Unauthorized: Only admins can create conferences";
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->model->createConference($_POST);
+            $data = $_POST;
+            // Convert slot to integer
+            if (isset($data['slot'])) {
+                $data['slot'] = (int)$data['slot'];
+            }
+            $this->model->createConference($data);
             header("Location: index.php?page=conference");
             exit;
         } else {
@@ -47,8 +64,22 @@ class ConferenceController {
             return;
         }
 
+        // Check authorization
+        $userRole = $_SESSION['user']['role'] ?? 'user';
+        $userEmail = $_SESSION['user']['email'] ?? null;
+        
+        if (!$this->model->canModify($id, $userRole, $userEmail)) {
+            echo "Unauthorized: Only the creator or admin can edit this conference";
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $this->model->updateConference($id, $_POST);
+            $data = $_POST;
+            // Convert slot to integer
+            if (isset($data['slot'])) {
+                $data['slot'] = (int)$data['slot'];
+            }
+            $this->model->updateConference($id, $data);
             header("Location: index.php?page=conference");
             exit;
         } else {
@@ -60,10 +91,21 @@ class ConferenceController {
     public function delete() {
         $id = $_GET['id'] ?? null;
 
-        if ($id) {
-            $this->model->deleteConference($id);
+        if (!$id) {
+            echo "Invalid ID";
+            return;
         }
 
+        // Check authorization
+        $userRole = $_SESSION['user']['role'] ?? 'user';
+        $userEmail = $_SESSION['user']['email'] ?? null;
+        
+        if (!$this->model->canModify($id, $userRole, $userEmail)) {
+            echo "Unauthorized: Only the creator or admin can delete this conference";
+            return;
+        }
+
+        $this->model->deleteConference($id);
         header("Location: index.php?page=conference");
         exit;
     }
