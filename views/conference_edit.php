@@ -135,7 +135,7 @@
                 <option value="4" <?php echo (($conference['slot'] ?? null) == 4) ? 'selected' : ''; ?>>Slot 4: 12:00 PM - 1:00 PM</option>
                 <option value="5" <?php echo (($conference['slot'] ?? null) == 5) ? 'selected' : ''; ?>>Slot 5: 1:00 PM - 2:00 PM</option>
                 <option value="6" <?php echo (($conference['slot'] ?? null) == 6) ? 'selected' : ''; ?>>Slot 6: 2:00 PM - 3:00 PM</option>
-                <option value="7" <?php echo (($conference['slot'] ?? null) == 7) ? 'selected' : ''; ?>>Slot 7: 3:00 PM - 9:00 PM</option>
+                <option value="7" <?php echo (($conference['slot'] ?? null) == 7) ? 'selected' : ''; ?>>Slot 7: 3:00 PM - 4:00 PM</option>
             </select>
         </div>
 

@@ -88,6 +88,35 @@ class ConferenceController {
         }
     }
 
+    public function getDetailJson() {
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            echo json_encode(['success' => false, 'message' => 'Invalid ID']);
+            return;
+        }
+
+        $conference = $this->model->getConferenceById($id);
+
+        if (!$conference) {
+            echo json_encode(['success' => false, 'message' => 'Conference not found']);
+            return;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'conference' => [
+                '_id' => (string)($conference['_id'] ?? ''),
+                'title' => $conference['title'] ?? '',
+                'date' => $conference['date'] ?? '',
+                'location' => $conference['location'] ?? '',
+                'slot' => $conference['slot'] ?? 0,
+                'description' => $conference['description'] ?? '',
+                'created_by' => $conference['created_by'] ?? ''
+            ]
+        ]);
+    }
+
     public function delete() {
         $id = $_GET['id'] ?? null;
 

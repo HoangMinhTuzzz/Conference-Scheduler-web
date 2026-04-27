@@ -18,7 +18,7 @@ The 7 time slots divide the day from 9 AM to 9 PM:
 | 4 | 12:00 PM - 1:00 PM | Slot 4: 12:00 PM - 1:00 PM |
 | 5 | 1:00 PM - 2:00 PM | Slot 5: 1:00 PM - 2:00 PM |
 | 6 | 2:00 PM - 3:00 PM | Slot 6: 2:00 PM - 3:00 PM |
-| 7 | 3:00 PM - 9:00 PM | Slot 7: 3:00 PM - 9:00 PM |
+| 7 | 3:00 PM - 4:00 PM | Slot 7: 3:00 PM - 4:00 PM |
 
 ---
 

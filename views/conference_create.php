@@ -117,7 +117,7 @@
                 <option value="4">Slot 4: 12:00 PM - 1:00 PM</option>
                 <option value="5">Slot 5: 1:00 PM - 2:00 PM</option>
                 <option value="6">Slot 6: 2:00 PM - 3:00 PM</option>
-                <option value="7">Slot 7: 3:00 PM - 9:00 PM</option>
+                <option value="7">Slot 7: 3:00 PM - 4:00 PM</option>
             </select>
         </div>
 

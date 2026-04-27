@@ -51,6 +51,11 @@ switch ($page) {
         (new ConferenceController())->delete();
         break;
 
+    case 'api_conference_detail':
+        header('Content-Type: application/json');
+        (new ConferenceController())->getDetailJson();
+        break;
+
     case 'schedule':
         (new ScheduleController())->index();
         break;

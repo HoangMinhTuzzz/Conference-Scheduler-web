@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conference Details</title>
 
     <style>
         body {
             margin: 0;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: #f4f6f9;
         }
 
@@ -32,6 +33,23 @@
             font-size: 32px;
         }
 
+        .badge-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
         .content {
             padding: 30px;
         }
@@ -50,6 +68,9 @@
             font-weight: 600;
             color: #667eea;
             margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .detail-value {
@@ -62,19 +83,22 @@
             display: flex;
             gap: 10px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
 
         .btn {
-            flex: 1;
-            padding: 12px;
+            padding: 12px 20px;
             text-align: center;
-            border-radius: 6px;
+            border-radius: 8px;
             text-decoration: none;
             color: white;
             font-size: 14px;
-            transition: 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
             border: none;
             cursor: pointer;
+            flex: 1;
+            min-width: 120px;
         }
 
         .btn-edit {
@@ -83,6 +107,8 @@
 
         .btn-edit:hover {
             background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-delete {
@@ -91,6 +117,8 @@
 
         .btn-delete:hover {
             background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .btn-back {
@@ -99,21 +127,71 @@
 
         .btn-back:hover {
             background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
         }
 
         .no-data {
             color: #999;
             font-style: italic;
         }
+
+        .view-only-notice {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #0c4a6e;
+            padding: 14px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0284c7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .view-only-notice::before {
+            content: "ℹ️";
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px auto;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                flex: none;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
 <body>
 
-<?php include __DIR__ . "/layout/header.php"; ?>
+<?php include __DIR__ . "/Layout/header.php"; ?>
 
 <?php 
 $isLoggedIn = isset($_SESSION['user']);
+$userRole = $_SESSION['user']['role'] ?? 'user';
+$userEmail = $_SESSION['user']['email'] ?? null;
+$isCreator = $conference && (($conference['created_by'] ?? null) === $userEmail);
+$canEdit = ($userRole === 'admin' || $isCreator) && $isLoggedIn;
 ?>
 
 <div class="container">
@@ -126,9 +204,20 @@ $isLoggedIn = isset($_SESSION['user']);
     <?php elseif ($conference): ?>
         <div class="header">
             <h1><?php echo htmlspecialchars($conference['title'] ?? 'Conference'); ?></h1>
+            <?php if (!$canEdit): ?>
+                <div class="badge-row">
+                    <span class="badge">👁️ View Only</span>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="content">
+            <?php if (!$canEdit && $isLoggedIn): ?>
+                <div class="view-only-notice">
+                    This is a read-only view. Only the conference creator or administrators can edit or delete.
+                </div>
+            <?php endif; ?>
+
             <div class="detail-item">
                 <div class="detail-label">📅 Date</div>
                 <div class="detail-value"><?php echo htmlspecialchars($conference['date'] ?? 'N/A'); ?></div>
@@ -150,7 +239,7 @@ $isLoggedIn = isset($_SESSION['user']);
                         4 => 'Slot 4: 12:00 PM - 1:00 PM',
                         5 => 'Slot 5: 1:00 PM - 2:00 PM',
                         6 => 'Slot 6: 2:00 PM - 3:00 PM',
-                        7 => 'Slot 7: 3:00 PM - 9:00 PM',
+                        7 => 'Slot 7: 3:00 PM - 4:00 PM',
                     ];
                     $slot = $conference['slot'] ?? null;
                     echo $slot && isset($slotMap[$slot]) ? htmlspecialchars($slotMap[$slot]) : 'Not assigned';
@@ -172,16 +261,23 @@ $isLoggedIn = isset($_SESSION['user']);
                 </div>
             </div>
 
+            <div class="detail-item">
+                <div class="detail-label">👤 Created By</div>
+                <div class="detail-value"><?php echo htmlspecialchars($conference['created_by'] ?? 'N/A'); ?></div>
+            </div>
+
             <div class="actions">
-                <a href="index.php?page=conference_edit&id=<?php echo (string)($conference['_id'] ?? ''); ?>" class="btn btn-edit">✏️ Edit</a>
-                <a href="#" onclick="if(confirm('Delete this conference?')) window.location.href='index.php?page=conference_delete&id=<?php echo (string)($conference['_id'] ?? ''); ?>';" class="btn btn-delete">🗑️ Delete</a>
-                <a href="index.php?page=conference" class="btn btn-back">← Back</a>
+                <?php if ($canEdit): ?>
+                    <a href="index.php?page=conference_edit&id=<?php echo (string)($conference['_id'] ?? ''); ?>" class="btn btn-edit">✏️ Edit</a>
+                    <a href="#" onclick="if(confirm('Delete this conference?')) window.location.href='index.php?page=conference_delete&id=<?php echo (string)($conference['_id'] ?? ''); ?>';" class="btn btn-delete">🗑️ Delete</a>
+                <?php endif; ?>
+                <a href="index.php?page=schedule" class="btn btn-back">← Back to Schedule</a>
             </div>
         </div>
     <?php else: ?>
         <div class="content">
-            <p>Conference not found.</p>
-            <a href="index.php?page=conference" class="btn btn-back">← Back to Conferences</a>
+            <p style="color: #666; font-size: 16px;">Conference not found.</p>
+            <a href="index.php?page=schedule" class="btn btn-back">← Back to Schedule</a>
         </div>
     <?php endif; ?>
 </div>
