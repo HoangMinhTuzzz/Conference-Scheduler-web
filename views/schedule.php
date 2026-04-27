@@ -392,7 +392,22 @@ $isLoggedIn = isset($_SESSION['user']);
 // Xử lý chọn năm, tháng, tuần
 $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 $month = isset($_GET['month']) ? intval($_GET['month']) : date('n');
-$week = isset($_GET['week']) ? intval($_GET['week']) : 1;
+
+// Function to calculate which week of the month a date falls into
+function getWeekOfMonth($year, $month, $day) {
+	$firstDay = new DateTime("$year-$month-01");
+	$firstWeek = (int)$firstDay->format('W');
+	$currentDate = new DateTime("$year-$month-$day");
+	$currentWeek = (int)$currentDate->format('W');
+	return $currentWeek - $firstWeek + 1;
+}
+
+// Set default week to current week if viewing current month
+$defaultWeek = 1;
+if ($year == date('Y') && $month == date('n')) {
+	$defaultWeek = getWeekOfMonth($year, $month, date('d'));
+}
+$week = isset($_GET['week']) ? intval($_GET['week']) : $defaultWeek;
 
 // Tính số tuần trong tháng
 function weeksInMonth($year, $month) {
