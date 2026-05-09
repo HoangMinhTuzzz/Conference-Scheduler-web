@@ -40,7 +40,9 @@ class AuthController {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
             $confirm = $_POST['confirm_password'] ?? '';
-            if ($password !== $confirm) {
+            if (!preg_match('/^(?=.*[A-Z])(?=.*\d).{6,}$/', $password)) {
+                $error = 'mật khẩu phải có ít nhất 6 kí tự, 1 chữ in hoa và 1 chữ số .';
+            } else if ($password !== $confirm) {
                 $error = 'Mật khẩu không khớp.';
             } else {
                 $userModel = new UserModel();

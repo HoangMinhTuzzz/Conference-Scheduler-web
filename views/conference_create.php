@@ -131,6 +131,71 @@
 
     <a href="index.php?page=conference" class="back-link">← Back to Conferences</a>
 </div>
+<script>
+// Danh sách slot cố định
+const slotList = [
+    {slot: 1, start: '09:00', label: 'Slot 1: 9:00 AM - 10:00 AM'},
+    {slot: 2, start: '10:00', label: 'Slot 2: 10:00 AM - 11:00 AM'},
+    {slot: 3, start: '11:00', label: 'Slot 3: 11:00 AM - 12:00 PM'},
+    {slot: 4, start: '12:00', label: 'Slot 4: 12:00 PM - 1:00 PM'},
+    {slot: 5, start: '13:00', label: 'Slot 5: 1:00 PM - 2:00 PM'},
+    {slot: 6, start: '14:00', label: 'Slot 6: 2:00 PM - 3:00 PM'},
+    {slot: 7, start: '15:00', label: 'Slot 7: 3:00 PM - 4:00 PM'},
+    {slot: 8, start: '20:00', label: 'Slot 8: 8:00 PM - 9:00 PM'}
+];
 
+function pad(n) { return n < 10 ? '0' + n : n; }
+
+function getTodayStr() {
+    const d = new Date();
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+
+function getCurrentTimeStr() {
+    const d = new Date();
+    return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function updateSlotOptions() {
+    const dateInput = document.querySelector('input[name="date"]');
+    const slotSelect = document.querySelector('select[name="slot"]');
+    const msgDiv = document.getElementById('slot-msg');
+    if (!dateInput || !slotSelect) return;
+    const selectedDate = dateInput.value;
+    const today = getTodayStr();
+    const nowTime = getCurrentTimeStr();
+    slotSelect.innerHTML = '<option value="">-- Select Time Slot --</option>';
+    let disableAll = false;
+    if (selectedDate < today) {
+        disableAll = true;
+    }
+    if (disableAll) {
+        slotSelect.disabled = true;
+        if (msgDiv) msgDiv.style.display = 'block';
+        return;
+    } else {
+        slotSelect.disabled = false;
+        if (msgDiv) msgDiv.style.display = 'none';
+    }
+    slotList.forEach(slot => {
+        let isPast = false;
+        if (selectedDate === today && nowTime > slot.start) isPast = true;
+        if (!isPast) {
+            const opt = document.createElement('option');
+            opt.value = slot.slot;
+            opt.textContent = slot.label;
+            slotSelect.appendChild(opt);
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.querySelector('input[name="date"]');
+    if (dateInput) {
+        dateInput.addEventListener('change', updateSlotOptions);
+        updateSlotOptions();
+    }
+});
+</script>
 </body>
 </html>

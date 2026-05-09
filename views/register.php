@@ -319,6 +319,8 @@
                             name="password" 
                             class="form-input"
                             placeholder="••••••••"
+                            pattern="(?=.*[A-Z])(?=.*\d).{6,}"
+                            title="Mật khẩu phải có ít nhất 6 ký tự, 1 chữ in hoa và 1 chữ số."
                             required
                         >
                         <div class="password-hint">ℹ️ Tối thiểu 6 ký tự</div>
