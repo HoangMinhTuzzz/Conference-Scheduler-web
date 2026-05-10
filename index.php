@@ -2,9 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 session_start();
-
 require_once "config.php";
 
 // Load controllers
@@ -56,6 +54,11 @@ switch ($page) {
         (new ConferenceController())->getDetailJson();
         break;
 
+    case 'api_available_slots':
+        header('Content-Type: application/json');
+        (new ConferenceController())->getAvailableSlots();
+        break;
+
     case 'schedule':
         (new ScheduleController())->index();
         break;
@@ -63,7 +66,6 @@ switch ($page) {
     case 'profile':
         (new UserController())->profile();
         break;
-
 
     case 'users':
         (new UserController())->index();

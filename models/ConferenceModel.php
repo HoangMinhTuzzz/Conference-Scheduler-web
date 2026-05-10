@@ -11,7 +11,6 @@ class ConferenceModel extends BaseModel {
     }
 
     public function createConference($data) {
-        // Add created_by field when creating conference
         $data['created_by'] = $_SESSION['user']['email'] ?? 'admin@gmail.com';
         return $this->collection->insertOne($data);
     }
@@ -22,14 +21,10 @@ class ConferenceModel extends BaseModel {
         ]);
     }
 
-    // Get all conferences (for admin) or only admin-created ones (for users)
     public function getAllConferences($userRole = 'user', $userEmail = null) {
-        // If admin, show all conferences
         if ($userRole === 'admin') {
             return $this->collection->find()->toArray();
         }
-        
-        // For regular users, only show conferences created by admin
         return $this->collection->find([
             'created_by' => 'admin@gmail.com'
         ])->toArray();
@@ -111,6 +106,13 @@ class ConferenceModel extends BaseModel {
             ['_id' => new MongoDB\BSON\ObjectId($id)],
             ['$set' => $data]
         );
+    }
+
+    // Get conferences by date
+    public function getConferencesByDate($date) {
+        return $this->collection->find([
+            'date' => $date
+        ])->toArray();
     }
 
     public function deleteConference($id) {
