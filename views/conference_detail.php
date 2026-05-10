@@ -271,6 +271,10 @@ $canEdit = ($userRole === 'admin' || $isCreator) && $isLoggedIn;
                     <a href="index.php?page=conference_edit&id=<?php echo (string)($conference['_id'] ?? ''); ?>" class="btn btn-edit">✏️ Edit</a>
                     <a href="#" onclick="if(confirm('Delete this conference?')) window.location.href='index.php?page=conference_delete&id=<?php echo (string)($conference['_id'] ?? ''); ?>';" class="btn btn-delete">🗑️ Delete</a>
                 <?php endif; ?>
+                <?php if ($isLoggedIn && !$canEdit): ?>
+                    <a href="index.php?page=register_session" class="btn btn-edit">📝 Đăng ký tham gia</a>
+                    <a href="index.php?page=registration_history" class="btn btn-back">📋 Lịch sử đăng ký</a>
+                <?php endif; ?>
                 <a href="index.php?page=schedule" class="btn btn-back">← Back to Schedule</a>
             </div>
         </div>

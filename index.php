@@ -63,6 +63,44 @@ switch ($page) {
         (new ScheduleController())->index();
         break;
 
+
+    case 'register_session':
+        // Hiển thị form đăng ký session và xử lý đăng ký
+        session_start();
+        $userId = $_SESSION['user']['_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+        require_once 'controllers/RegistrationController.php';
+        require_once 'models/ScheduleModel.php';
+        $controller = new RegistrationController();
+        $scheduleModel = new ScheduleModel();
+        $schedules = $scheduleModel->getAllSchedules();
+        $message = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $scheduleId = $_POST['schedule_id'] ?? '';
+            $result = $controller->register($userId, $scheduleId);
+            $message = $result['message'];
+        }
+        $user_id = $userId;
+        include 'views/registration_form.php';
+        break;
+
+    case 'registration_history':
+        // Hiển thị danh sách session đã đăng ký của user
+        session_start();
+        $userId = $_SESSION['user']['_id'] ?? null;
+        if (!$userId) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+        require_once 'controllers/RegistrationController.php';
+        $controller = new RegistrationController();
+        $registrations = $controller->listUserRegistrations($userId);
+        include 'views/registration_list.php';
+        break;
+
     case 'profile':
         (new UserController())->profile();
         break;
