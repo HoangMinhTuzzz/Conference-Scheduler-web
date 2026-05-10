@@ -21,4 +21,9 @@ class ScheduleModel extends BaseModel {
     public function getSchedulesByConference($confId) {
         return $this->collection->find(['conference_id' => $confId]);
     }
+
+    // Lấy tất cả các schedule
+    public function getAllSchedules() {
+        return $this->collection->find()->toArray();
+    }
 }

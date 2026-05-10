@@ -4,7 +4,11 @@
 require_once __DIR__ . '/BaseModel.php';
 
 class RegistrationModel extends BaseModel {
-    protected $collection = 'registrations';
+    public function __construct() {
+        require_once __DIR__ . '/../config.php';
+        $db = getMongoDBConnection();
+        $this->collection = $db->registrations;
+    }
 
     public function createRegistration($userId, $scheduleId, $status = 'pending') {
         $registration = [
